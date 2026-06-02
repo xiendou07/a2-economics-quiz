@@ -5,21 +5,20 @@
 
 题库为 Cambridge 9708 Paper 3 (A Level Multiple Choice)，共 **15 份真题、450 题**。
 
-👉 网站源码在 [`web/`](web/) 目录。
+👉 在线访问： **https://xiendou07.github.io/a2-economics-quiz/**
 
-## 在线访问
+## 在线托管 (GitHub Pages)
 
-本仓库可用 **GitHub Pages** 免费托管：
+网站文件在仓库根目录，已通过 GitHub Pages 部署。如需在自己的 fork 上开启：
 
 1. 仓库 **Settings → Pages**
 2. **Source** 选 `Deploy from a branch`
-3. Branch 选 `main`，目录选 `/web`，保存
+3. Branch 选 `main`，目录选 `/ (root)`，保存
 4. 等一两分钟，即可通过 `https://<用户名>.github.io/<仓库名>/` 访问
 
 ## 本地运行
 
 ```bash
-cd web
 python3 -m http.server 8000
 # 浏览器打开 http://localhost:8000
 ```
@@ -35,7 +34,7 @@ python3 -m http.server 8000
 | `download_all.py` | 下载真题(qp)与答案(ms) PDF |
 | `extract_answers.py` | 从 Mark Scheme 提取每题正确答案 |
 | `slice_questions.py` | 把题目 PDF 按题切成单独图片 |
-| `build_bank.py` | 合并答案与题图，生成 `web/questions.json` |
+| `build_bank.py` | 合并答案与题图，生成 `questions.json` |
 
 ## 版权说明
 

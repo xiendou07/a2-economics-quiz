@@ -17,7 +17,7 @@ import os, json, re
 
 DIR = os.path.dirname(os.path.abspath(__file__))
 
-with open(os.path.join(DIR, "web", "questions_index.json")) as f:
+with open(os.path.join(DIR, "questions_index.json")) as f:
     qindex = json.load(f)
 with open(os.path.join(DIR, "answers.json")) as f:
     answers = json.load(f)
@@ -65,9 +65,9 @@ out = {
     "questions": bank,
 }
 
-with open(os.path.join(DIR, "web", "questions.json"), "w") as f:
+with open(os.path.join(DIR, "questions.json"), "w") as f:
     json.dump(out, f, indent=2, ensure_ascii=False)
 
-print(f"✅ 题库生成: {len(bank)} 题, {len(papers)} 份卷子 -> web/questions.json")
+print(f"✅ 题库生成: {len(bank)} 题, {len(papers)} 份卷子 -> questions.json")
 if missing_answer:
     print(f"⚠️ 有 {missing_answer} 题缺答案")

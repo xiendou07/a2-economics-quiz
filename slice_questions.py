@@ -14,7 +14,7 @@ import os, re, json, glob
 import fitz  # PyMuPDF
 
 DIR = os.path.dirname(os.path.abspath(__file__))
-OUT_ROOT = os.path.join(DIR, "web", "questions")
+OUT_ROOT = os.path.join(DIR, "questions")
 os.makedirs(OUT_ROOT, exist_ok=True)
 
 ZOOM = 2.0  # 渲染清晰度 (2x ~ 144dpi 起步, 清晰)
@@ -107,7 +107,7 @@ def process_pdf(qp_path):
         clip = fitz.Rect(30, top, page_w - 30, bottom)
         pix = page.get_pixmap(matrix=mat, clip=clip)
         rel = f"questions/{key}/q{qn:02d}.png"
-        pix.save(os.path.join(DIR, "web", rel))
+        pix.save(os.path.join(DIR, rel))
         saved[str(qn)] = rel
 
     index[key] = saved
@@ -119,11 +119,11 @@ def process_pdf(qp_path):
 for qp in sorted(glob.glob(os.path.join(DIR, "9708_*_qp_*.pdf"))):
     process_pdf(qp)
 
-with open(os.path.join(DIR, "web", "questions_index.json"), "w") as f:
+with open(os.path.join(DIR, "questions_index.json"), "w") as f:
     json.dump(index, f, indent=2, ensure_ascii=False)
 
 total = sum(len(v) for v in index.values())
-print(f"\n共 {len(index)} 份卷子, {total} 张题图 -> web/questions_index.json")
+print(f"\n共 {len(index)} 份卷子, {total} 张题图 -> questions_index.json")
 bad = {k: len(v) for k, v in index.items() if len(v) != 30}
 if bad:
     print("⚠️ 题数不足30的卷子:", bad)
