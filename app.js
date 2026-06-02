@@ -205,9 +205,17 @@ function pickOption(letter){
   head.textContent = correct ? streakMsg(session.streak) : "❌ 答错了";
   head.className = "fb-head " + (correct ? "ok":"no");
   document.getElementById("fbAnswer").textContent = q.answer;
-  document.getElementById("fbExplain").textContent =
-    `来源：${q.paperName} 第 ${q.q} 题。` +
-    (correct ? "" : " 看清正确选项的逻辑，再做一次类似题巩固。");
+  const exEl = document.getElementById("fbExplain");
+  if(q.explain){
+    // 题库有真实讲解: 显示讲解 + 来源
+    exEl.textContent = q.explain;
+    exEl.classList.remove("muted-src");
+  }else{
+    // 暂无讲解: 显示来源占位
+    exEl.textContent = `来源：${q.paperName} 第 ${q.q} 题。`
+      + (correct ? "" : " 看清正确选项的逻辑，再做一次类似题巩固。");
+    exEl.classList.add("muted-src");
+  }
   fb.classList.remove("hidden");
   document.getElementById("progFill").style.width = ((session.idx+1)/session.list.length*100)+"%";
 }

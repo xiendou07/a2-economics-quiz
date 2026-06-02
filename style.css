@@ -104,8 +104,9 @@ body{
 .fb-head.ok{color:var(--green)} .fb-head.no{color:var(--red)}
 .fb-answer{font-size:15px;margin-bottom:8px}
 .fb-answer b{color:var(--green);font-size:18px}
-.fb-explain{font-size:13px;color:var(--muted);line-height:1.7;
-  border-left:3px solid var(--line);padding-left:12px;margin-bottom:16px}
+.fb-explain{font-size:13.5px;color:var(--text);line-height:1.8;
+  border-left:3px solid var(--accent);padding-left:12px;margin-bottom:16px}
+.fb-explain.muted-src{font-size:13px;color:var(--muted);border-left-color:var(--line);line-height:1.7}
 .next-btn{
   width:100%;background:linear-gradient(135deg,var(--accent),var(--accent2));
   color:#fff;border:none;border-radius:12px;padding:14px;font-size:16px;font-weight:700;

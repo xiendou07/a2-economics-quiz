@@ -22,6 +22,13 @@ with open(os.path.join(DIR, "questions_index.json")) as f:
 with open(os.path.join(DIR, "answers.json")) as f:
     answers = json.load(f)
 
+# 讲解(可选): explanations.json, key=题目id -> 讲解文本
+explanations = {}
+exp_path = os.path.join(DIR, "explanations.json")
+if os.path.exists(exp_path):
+    with open(exp_path) as f:
+        explanations = {k: v for k, v in json.load(f).items() if not k.startswith("_")}
+
 SERIES = {"m": "March", "s": "May/June", "w": "Oct/Nov"}
 
 def nice_name(key):
@@ -44,14 +51,18 @@ for key in sorted(qindex.keys()):
             missing_answer += 1
             print(f"⚠️ 缺答案: {key} 第{qn}题")
             continue
-        bank.append({
-            "id": f"{key}_q{qn}",
+        qid = f"{key}_q{qn}"
+        item = {
+            "id": qid,
             "paper": key,
             "paperName": nice_name(key),
             "q": qn,
             "img": imgs[sq],
             "answer": a,
-        })
+        }
+        if qid in explanations:
+            item["explain"] = explanations[qid]
+        bank.append(item)
 
 papers = sorted({b["paper"] for b in bank})
 out = {
@@ -68,6 +79,7 @@ out = {
 with open(os.path.join(DIR, "questions.json"), "w") as f:
     json.dump(out, f, indent=2, ensure_ascii=False)
 
-print(f"✅ 题库生成: {len(bank)} 题, {len(papers)} 份卷子 -> questions.json")
+n_exp = sum(1 for b in bank if "explain" in b)
+print(f"✅ 题库生成: {len(bank)} 题, {len(papers)} 份卷子, {n_exp} 题含讲解 -> questions.json")
 if missing_answer:
     print(f"⚠️ 有 {missing_answer} 题缺答案")
