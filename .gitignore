@@ -1,0 +1,13 @@
+# 原始真题/答案 PDF —— 体积大且为版权原件, 不上传
+*.pdf
+
+# 中间产物（可由脚本重新生成）
+answers.json
+web/questions_index.json
+
+# 系统/编辑器
+.DS_Store
+__pycache__/
+*.pyc
+.vscode/
+node_modules/

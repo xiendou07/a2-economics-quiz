@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A2 Economics 刷题 · 9708 Paper 3</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📈</text></svg>">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="app">
+
+  <!-- ============ 开始页 / 选择模式 ============ -->
+  <section id="home" class="screen">
+    <header class="home-head">
+      <h1>📈 A2 Economics 刷题</h1>
+      <p class="sub">Cambridge 9708 · Paper 3 · A Level Multiple Choice</p>
+    </header>
+
+    <div class="stats-row" id="globalStats">
+      <div class="stat"><span class="num" id="stTotal">0</span><span class="lbl">题库总数</span></div>
+      <div class="stat"><span class="num" id="stDone">0</span><span class="lbl">已做</span></div>
+      <div class="stat"><span class="num" id="stAcc">—</span><span class="lbl">正确率</span></div>
+      <div class="stat"><span class="num" id="stBestStreak">0</span><span class="lbl">最高连击</span></div>
+    </div>
+
+    <div class="mode-cards">
+      <button class="mode-card primary" data-mode="random-all">
+        <span class="mc-ico">🎲</span>
+        <span class="mc-title">随机刷题</span>
+        <span class="mc-desc">从全部 450 题随机抽，沉浸式连续刷</span>
+      </button>
+      <button class="mode-card" data-mode="wrong">
+        <span class="mc-ico">🔁</span>
+        <span class="mc-title">错题重练</span>
+        <span class="mc-desc">只刷做错过的题，针对性突破</span>
+      </button>
+    </div>
+
+    <h2 class="section-title">按卷子练习</h2>
+    <div class="paper-grid" id="paperGrid"><!-- JS 注入 --></div>
+
+    <p class="reset-line"><button id="resetBtn" class="link-btn">清空所有进度</button></p>
+  </section>
+
+  <!-- ============ 做题页 ============ -->
+  <section id="quiz" class="screen hidden">
+    <div class="quiz-top">
+      <button id="backBtn" class="icon-btn" title="返回">←</button>
+      <div class="progress-wrap">
+        <div class="progress-bar"><div class="progress-fill" id="progFill"></div></div>
+        <span class="progress-text" id="progText">0 / 0</span>
+      </div>
+      <div class="streak" id="streakBox" title="连击">🔥 <span id="streakNum">0</span></div>
+    </div>
+
+    <div class="quiz-meta">
+      <span id="qPaperName" class="paper-tag"></span>
+      <span id="qNumber" class="q-num"></span>
+    </div>
+
+    <div class="qimg-wrap">
+      <img id="qImg" alt="题目" />
+    </div>
+
+    <div class="options" id="options">
+      <button class="opt" data-opt="A"><span class="opt-key">A</span></button>
+      <button class="opt" data-opt="B"><span class="opt-key">B</span></button>
+      <button class="opt" data-opt="C"><span class="opt-key">C</span></button>
+      <button class="opt" data-opt="D"><span class="opt-key">D</span></button>
+    </div>
+
+    <!-- 判分后出现的反馈区 -->
+    <div class="feedback hidden" id="feedback">
+      <div class="fb-head" id="fbHead"></div>
+      <div class="fb-answer">正确答案：<b id="fbAnswer"></b></div>
+      <div class="fb-explain" id="fbExplain"></div>
+      <button class="next-btn" id="nextBtn">下一题 →</button>
+    </div>
+  </section>
+
+  <!-- ============ 完成页 ============ -->
+  <section id="result" class="screen hidden">
+    <h1 id="resTitle">🎉 完成！</h1>
+    <div class="res-stats">
+      <div class="res-stat"><span id="resScore" class="big"></span><span>得分</span></div>
+      <div class="res-stat"><span id="resAcc" class="big"></span><span>正确率</span></div>
+      <div class="res-stat"><span id="resStreak" class="big"></span><span>最高连击</span></div>
+    </div>
+    <div class="res-actions">
+      <button id="againBtn" class="next-btn">再来一组 🎲</button>
+      <button id="homeBtn" class="link-btn">回首页</button>
+    </div>
+  </section>
+
+</div>
+<script src="app.js"></script>
+</body>
+</html>
