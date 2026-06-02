@@ -7,11 +7,17 @@ let store = loadStore();  // 持久化进度
 
 /* ---------- 持久化 ---------- */
 function loadStore(){
-  try{ return JSON.parse(localStorage.getItem(SAVE_KEY)) || newStore(); }
+  try{
+    const s = JSON.parse(localStorage.getItem(SAVE_KEY)) || newStore();
+    if(!s.sessions) s.sessions = {};   // 兼容旧存档
+    if(!s.results)  s.results  = {};
+    return s;
+  }
   catch(e){ return newStore(); }
 }
 function newStore(){
   return { results:{}, /* id -> {correct:bool, picks:int} */
+           sessions:{}, /* paperKey -> {idx, correct, bestStreak} 卷子练习的断点 */
            bestStreak:0, totalAnswered:0, totalCorrect:0 };
 }
 function saveStore(){ localStorage.setItem(SAVE_KEY, JSON.stringify(store)); }
@@ -46,13 +52,16 @@ function renderHome(){
     const qsInPaper = BANK.questions.filter(q=>q.paper===p.key);
     const doneN = qsInPaper.filter(q=>store.results[q.id]).length;
     const pct = Math.round(doneN/qsInPaper.length*100);
+    const sess = store.sessions[p.key];        // 断点(若有)
+    const resuming = sess && sess.idx > 0 && sess.idx < qsInPaper.length;
     const el = document.createElement("button");
-    el.className = "paper-card";
+    el.className = "paper-card" + (resuming ? " resuming" : "");
     el.innerHTML = `
       <div class="pc-name">${p.name}</div>
       <div class="pc-meta"><span>${p.count} 题</span><span>${doneN}/${p.count}</span></div>
-      <div class="pc-bar"><i style="width:${pct}%"></i></div>`;
-    el.onclick = ()=> startSession(qsInPaper, p.name, false);
+      <div class="pc-bar"><i style="width:${pct}%"></i></div>
+      ${resuming ? `<div class="pc-resume">▶ 续做 第 ${sess.idx+1} 题</div>` : ``}`;
+    el.onclick = ()=> openPaper(p, qsInPaper);
     grid.appendChild(el);
   });
   showScreen("home");
@@ -71,7 +80,7 @@ function bindGlobal(){
       }
     };
   });
-  document.getElementById("backBtn").onclick = ()=>{ saveStore(); renderHome(); };
+  document.getElementById("backBtn").onclick = ()=>{ saveSessionProgress(); saveStore(); renderHome(); };
   document.getElementById("resetBtn").onclick = ()=>{
     if(confirm("确定清空所有进度和统计？此操作不可恢复。")){
       store = newStore(); saveStore(); renderHome();
@@ -95,11 +104,40 @@ function bindGlobal(){
 }
 
 /* ---------- 会话 ---------- */
-function startSession(questions, name, isRandom){
-  session = { list:questions, idx:0, name, isRandom,
-              streak:0, bestStreak:0, correct:0, answered:false };
+// 打开一份卷子: 有断点则询问续做/重做, 否则从头开始
+function openPaper(p, qsInPaper){
+  const sess = store.sessions[p.key];
+  const resuming = sess && sess.idx > 0 && sess.idx < qsInPaper.length;
+  if(resuming){
+    const go = confirm(`这份卷子上次做到第 ${sess.idx+1} 题。\n\n确定 = 从第 ${sess.idx+1} 题继续\n取消 = 从头重做`);
+    if(go){
+      startSession(qsInPaper, p.name, false, p.key,
+                   { idx:sess.idx, correct:sess.correct||0, bestStreak:sess.bestStreak||0 });
+      return;
+    }
+    delete store.sessions[p.key];   // 选择重做: 清掉断点
+    saveStore();
+  }
+  startSession(qsInPaper, p.name, false, p.key);
+}
+
+// resume: {idx, correct, bestStreak} 续做时传入
+function startSession(questions, name, isRandom, paperKey, resume){
+  session = { list:questions, idx: resume?.idx || 0, name, isRandom,
+              paperKey: paperKey || null,
+              streak:0, bestStreak: resume?.bestStreak || 0,
+              correct: resume?.correct || 0, answered:false };
   showScreen("quiz");
   loadQuestion();
+}
+
+// 保存当前卷子练习的断点(仅按卷子模式; 随机/错题不保存断点)
+function saveSessionProgress(){
+  if(!session.paperKey) return;
+  store.sessions[session.paperKey] = {
+    idx: session.idx, correct: session.correct, bestStreak: session.bestStreak,
+  };
+  saveStore();
 }
 
 function loadQuestion(){
@@ -158,6 +196,7 @@ function pickOption(letter){
   }
   store.results[q.id] = { correct, picks:(store.results[q.id]?.picks||0)+1 };
   store.bestStreak = Math.max(store.bestStreak, session.bestStreak);
+  saveSessionProgress();   // 记录卷子断点(答完这题, 下次从下一题继续)
   saveStore();
 
   // 反馈
@@ -183,10 +222,13 @@ function streakMsg(s){
 function nextQuestion(){
   session.idx++;
   if(session.idx >= session.list.length){ finishSession(); return; }
+  saveSessionProgress();   // 推进到下一题后存断点
   loadQuestion();
 }
 
 function finishSession(){
+  // 整卷做完: 清除断点(下次从头开始)
+  if(session.paperKey){ delete store.sessions[session.paperKey]; saveStore(); }
   showScreen("result");
   const total = session.list.length;
   const acc = Math.round(session.correct/total*100);

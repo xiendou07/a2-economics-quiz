@@ -53,6 +53,8 @@ body{
 .paper-card .pc-meta{font-size:11px;color:var(--muted);margin-top:8px;display:flex;justify-content:space-between}
 .pc-bar{height:4px;background:var(--line);border-radius:3px;margin-top:8px;overflow:hidden}
 .pc-bar i{display:block;height:100%;background:var(--green);width:0}
+.paper-card.resuming{border-color:var(--gold)}
+.pc-resume{margin-top:8px;font-size:11px;color:var(--gold);font-weight:600}
 
 .reset-line{text-align:center;margin-top:30px}
 .link-btn{background:none;border:none;color:var(--muted);cursor:pointer;font-size:13px;text-decoration:underline}
